@@ -39,38 +39,38 @@ spec:
         app: mysql
     spec:
       containers:
-      - name: mysql
-        image: mysql:8.0
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: mysql-root-password
-        - name: MYSQL_DATABASE
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: mysql-database
-        - name: MYSQL_USER
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: mysql-user
-        - name: MYSQL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: mysql-password
-        ports:
-        - containerPort: 3306
-        volumeMounts:
-        - name: mysql-persistent-storage
-          mountPath: /var/lib/mysql
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: mysql-root-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: mysql-database
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: mysql-user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: mysql-password
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
       volumes:
-      - name: mysql-persistent-storage
-        persistentVolumeClaim:
-          claimName: mysql-pv-claim
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
 
 ---
 apiVersion: v1
@@ -81,8 +81,8 @@ spec:
   selector:
     app: mysql
   ports:
-  - port: 3306
-    targetPort: 3306
+    - port: 3306
+      targetPort: 3306
 
 ---
 # ===========================
@@ -103,27 +103,27 @@ spec:
         app: backend
     spec:
       containers:
-      - name: backend
-        image: maturusravankumar/online-banking-backend:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 4050
-        env:
-        - name: SERVER_PORT
-          value: "4050"
-        - name: SPRING_DATASOURCE_URL
-          value: "jdbc:mysql://mysql-service:3306/bankify_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false"
-        - name: SPRING_DATASOURCE_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: mysql-user
-        - name: SPRING_DATASOURCE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-secrets
-              key: mysql-password
-        # Add JWT Secret if needed, or other env vars
+        - name: backend
+          image: nagiseishiro11/onlinebankingbackend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4050
+          env:
+            - name: SERVER_PORT
+              value: "4050"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-service:3306/bankify_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: mysql-user
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: mysql-password
+          # Add JWT Secret if needed, or other env vars
 
 ---
 apiVersion: v1
@@ -134,8 +134,8 @@ spec:
   selector:
     app: backend
   ports:
-  - port: 4050
-    targetPort: 4050
+    - port: 4050
+      targetPort: 4050
 
 ---
 # ===========================
@@ -156,11 +156,11 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: frontend
-        image: maturusravankumar/online-banking-frontend:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 80
+        - name: frontend
+          image: nagiseishiro11/onlinebankingfrontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
 
 ---
 apiVersion: v1
@@ -172,5 +172,5 @@ spec:
   selector:
     app: frontend
   ports:
-  - port: 4040
-    targetPort: 80
+    - port: 4040
+      targetPort: 80

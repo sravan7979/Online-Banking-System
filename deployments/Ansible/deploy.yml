@@ -1,0 +1,35 @@
+---
+- name: Deploy Online Banking System
+  hosts: local
+  gather_facts: no
+  vars:
+    frontend_image: nagiseishiro11/onlinebankingfrontend:latest
+    backend_image: nagiseishiro11/onlinebankingbackend:latest
+    project_root: "../../"
+
+  tasks:
+    - name: Build Backend Docker Image
+      shell: |
+        docker build -t {{ backend_image }} -f deployments/K8s/Dockerfile.backend .
+      args:
+        chdir: "{{ project_root }}"
+
+    - name: Push Backend Docker Image
+      shell: |
+        docker push {{ backend_image }}
+
+    - name: Build Frontend Docker Image
+      shell: |
+        docker build -t {{ frontend_image }} -f deployments/K8s/Dockerfile.frontend .
+      args:
+        chdir: "{{ project_root }}"
+
+    - name: Push Frontend Docker Image
+      shell: |
+        docker push {{ frontend_image }}
+
+    - name: Apply Kubernetes Manifests
+      shell: |
+        kubectl apply -f deployments/K8s/deployment.yaml
+      args:
+        chdir: "{{ project_root }}"

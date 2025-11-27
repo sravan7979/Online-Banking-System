@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y git
 
 # Clone repo
-RUN git clone https://github.com/sravan7979/Online-Banking-System.git .
+RUN git clone https://github.com/nagisheshero11/Online_Banking_System.git .
 
 # Build
 WORKDIR /app/server
